@@ -1,10 +1,16 @@
-var path = require('path')
+const path = require('path');
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+
+const htmlPlugin = new HtmlWebPackPlugin({
+  template: "./app/index.html",
+  filename: "./index.html"
+});
 
 module.exports = {
-  entry: './app/components/index.jsx',
+  entry: './app/index.jsx',
   output: {
-    path: path.resolve(__dirname, './app/dist'),
-    publicPath: 'app/dist/',
+    path: path.resolve(__dirname, './dist'),
+    // publicPath: 'app/dist',
     filename: "main.js",
   },
   module: {
@@ -35,5 +41,6 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  plugins: [htmlPlugin]
 };
