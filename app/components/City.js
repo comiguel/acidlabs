@@ -11,7 +11,7 @@ export default class City extends React.Component {
 
 	componentDidMount() {
 		if (this.props.icon) {
-			const skycons = new Skycons({ color: "#0e2a8e" });
+			const skycons = new Skycons({ color: "#dcdcdc" });
 			skycons.add(this.props.name, this.props.icon);
 			skycons.play();
 		}
@@ -19,7 +19,7 @@ export default class City extends React.Component {
 
 	componentDidUpdate() {
 		if (this.props.icon) {
-			const skycons = new Skycons({ color: "#0e2a8e" });
+			const skycons = new Skycons({ color: "#dcdcdc" });
 			skycons.set(this.props.name, this.props.icon);
 			skycons.play();
 		}
@@ -28,7 +28,7 @@ export default class City extends React.Component {
 	render() {
 		return (
 			<div className="col col-md-4 col-sm-2 p-2">
-				<Card>
+				<Card className="pt-3">
 					<canvas id={this.props.name} width="auto" height="auto"></canvas>
 					<CardBody>
 						<h2>{this.props.name}</h2>
