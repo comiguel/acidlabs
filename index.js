@@ -53,7 +53,7 @@ rClient.on("ready", async () => {
 					rClient.set("cities", JSON.stringify(forecast));
 					io.sockets.emit('updatedForecast', forecast);
 				}
-			}, 50000);
+			}, 10000);
 		}
 	});
 
