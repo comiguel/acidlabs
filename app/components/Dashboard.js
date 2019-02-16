@@ -18,6 +18,10 @@ export default class Dashboard extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    this.socket.disconnect();
+  }
+
   createCities() {
   	const cities = [];
 

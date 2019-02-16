@@ -26,15 +26,35 @@ rClient.on("ready", async () => {
 	});
 
 	const io = engine(server);
+	let clientsCount = 0, refInterval = null;
 
-	io.on('connection', async (socket) => {
-		console.log('Conectado cliente');
+	io.on('connect', async (socket) => {
+		clientsCount++;
+		console.log('Conectado cliente', clientsCount+' Clientes');
 		/*socket.on('requestUpdate', (forecast) => {
 			const forecast = await getCities();
 			io.sockets.emit('updatedForecast', forecast);
 		});*/
+		socket.on('disconnect', (reason) => {
+			clientsCount--;
+			console.log(`Cliente desconectado, quedan ${clientsCount} restantes`);
+			if (clientsCount === 0) {
+				console.log('Deteniendo Interval ya que no hay clientes conectados');
+				clearInterval(refInterval);
+			}
+		});
 		const forecast = await getCities();
 		socket.emit('updatedForecast', forecast);
+		if (clientsCount === 1){
+			console.log('Iniciado Interval ', clientsCount+' Clientes conectados');
+			refInterval = setInterval(async () => {
+				const forecast = await refreshForecast();
+				if (forecast){
+					rClient.set("cities", JSON.stringify(forecast));
+					io.sockets.emit('updatedForecast', forecast);
+				}
+			}, 50000);
+		}
 	});
 
 	const forecast = await refreshForecast();
@@ -42,14 +62,6 @@ rClient.on("ready", async () => {
 		rClient.set("cities", JSON.stringify(forecast));
 		io.sockets.emit('updatedForecast', forecast);
 	}
-
-	const refInterval = setInterval(async () => {
-		const forecast = await refreshForecast();
-		if (forecast){
-			rClient.set("cities", JSON.stringify(forecast));
-			io.sockets.emit('updatedForecast', forecast);
-		}
-	}, 30000);
 });
 
 async function getCities() {
