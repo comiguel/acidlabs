@@ -31,11 +31,11 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              modules: true,
-              importLoaders: 1,
-              localIdentName: "[name]_[local]_[hash:base64]",
-              sourceMap: true,
-              minimize: true
+              // modules: true,
+              // importLoaders: 2,
+              // localIdentName: "[name]_[local]_[hash:base64]",
+              sourceMap: true
+              // minimize: true
             }
           }
         ]

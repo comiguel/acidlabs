@@ -30,14 +30,34 @@ rClient.on("ready", async () => {
 	io.on('connection', async (socket) => {
 		console.log('Conectado cliente');
 		/*socket.on('requestUpdate', (forecast) => {
-			const rCities = await getCities();
+			const forecast = await getCities();
 			io.sockets.emit('updatedForecast', forecast);
 		});*/
-			const rCities = await getCities();
-			socket.emit('updatedForecast', rCities);
+		const forecast = await getCities();
+		socket.emit('updatedForecast', forecast);
 	});
 
-	const ref = setInterval(async () => {
+	const forecast = await refreshForecast();
+	if (forecast){
+		rClient.set("cities", JSON.stringify(forecast));
+		io.sockets.emit('updatedForecast', forecast);
+	}
+
+	const refInterval = setInterval(async () => {
+		const forecast = await refreshForecast();
+		if (forecast){
+			rClient.set("cities", JSON.stringify(forecast));
+			io.sockets.emit('updatedForecast', forecast);
+		}
+	}, 30000);
+});
+
+async function getCities() {
+	return JSON.parse(await rClient.get('cities'));
+}
+
+	async function refreshForecast() {
+		console.log('Refrescando pronóstico');
 		let updated = false, intents = 0;
 		while(!updated) {
 			console.log(`Intento No. ${intents++}`);
@@ -45,19 +65,13 @@ rClient.on("ready", async () => {
 				errorProbability();
 				updated = true;
 				const forecast = await updateForecast();
-				rClient.set("cities", JSON.stringify(forecast));
-				io.sockets.emit('updatedForecast', forecast);
+				return forecast;
 			} catch (e) {
 				console.log(`falló intento No. ${intents}`);
 				errorHandler(e);
 			}
 		}
-	}, 10000);
-});
-
-async function getCities() {
-	return JSON.parse(await rClient.get('cities'));
-}
+	}
 
 async function updateForecast() {
 	const now = moment(), forecast = {}, rCities = await getCities();
