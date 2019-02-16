@@ -11,7 +11,7 @@ export default class Dashboard extends React.Component {
 	}
 
 	componentWillMount() {
-    this.socket = io(`http://localhost:${config.port}`);
+    this.socket = io(`${config.host}:${config.port}`);
     this.socket.on('updatedForecast', (forecast) => {
     	console.log(forecast);
       this.updateForecast(forecast);
